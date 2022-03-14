@@ -58,3 +58,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Ignore .mp4 and .sgv files since they're too large to be pushed.
+/[Aa]ssets/StreamingAssets/VOD/*.mp4
+/[Aa]ssets/StreamingAssets/VOD/*.sgv
