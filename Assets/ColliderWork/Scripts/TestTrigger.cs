@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColliderManager : MonoBehaviour
+public class TestTrigger : MonoBehaviour
 {
+    public ColliderManager Manager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,5 +16,12 @@ public class ColliderManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Collider hit");
+
+        Manager.CollisionDetected_TriggerEnter(other);
     }
 }
