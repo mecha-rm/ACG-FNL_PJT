@@ -1446,8 +1446,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Stop the Game and Hit 'Play' Again to Update the Timeline with the Added
-    Clips.
+  m_Text: Click off the timeline object and click on it again to view the newly added
+    clips.
 --- !u!222 &1068806453
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1469,7 +1469,7 @@ GameObject:
   - component: {fileID: 1076803768}
   - component: {fileID: 1076803770}
   m_Layer: 5
-  m_Name: Clip Count Text
+  m_Name: Track Count Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1527,7 +1527,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Clip Count: 000'
+  m_Text: 'Track Count: 000'
 --- !u!222 &1076803769
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2181,6 +2181,8 @@ PlayableDirector:
   m_SceneBindings:
   - key: {fileID: -1557154177823841342, guid: fc3bf23fb12e04fcbbb120d43124ce40, type: 2}
     value: {fileID: 969970084}
+  - key: {fileID: 3643419478875689425, guid: fc3bf23fb12e04fcbbb120d43124ce40, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &1532945661
@@ -2211,7 +2213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   director: {fileID: 1532945663}
   nameInputField: {fileID: 11231074}
-  clipCountText: {fileID: 1076803768}
+  trackCountText: {fileID: 1076803768}
 --- !u!114 &1532945663
 MonoBehaviour:
   m_ObjectHideFlags: 0
