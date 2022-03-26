@@ -12,6 +12,9 @@ public class VolumetricAnimator : MonoBehaviour
     // the input for the file for the volumetric animator.
     public InputField nameInputField;
 
+    // the amount of clips.
+    public Text clipCountText;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -92,8 +95,7 @@ public class VolumetricAnimator : MonoBehaviour
             track = director.timelineasset.CreateTrack<VolumetricRenderTrack>();
 
         // adds a clip
-        // the clip cannot be grabbed.
-        // track.CreateClip<VolumetricRenderClip>();
+        // the clip cannot be grabbed for some reason.
         track.CreateDefaultClip();
 
         // NOTE: when you add a track, it will not show up until you stop the program and run it again.
@@ -103,5 +105,14 @@ public class VolumetricAnimator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // updates the text.
+        if (clipCountText != null && director != null)
+        {
+            // the amount of clips (this is +1 of the amount of clips)
+            int clipCount = director.timelineasset.outputTrackCount - 1;
+
+            // updates the text.
+            clipCountText.text = "Clip Count: " + clipCount.ToString("000");
+        }
     }
 }
