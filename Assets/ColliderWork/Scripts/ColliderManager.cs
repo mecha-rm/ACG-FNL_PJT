@@ -6,7 +6,9 @@ public class ColliderManager : MonoBehaviour
 {
 
     public Actor Track_Target; //The Actor or Volumetric Video we are attached to.
+
     public bool Parented = true; //Is this a separated Manager?
+
     public Vector3 OffSet; //To help reach the appropriate origin.
 
     void Update()
