@@ -16,9 +16,21 @@ using UnityEngine.UI;
 using UnityEngine.Timeline;
 using UnityEngine.Playables;
 
+/*
+ * TODO: next steps for the animator.
+ *  - create group if provided group was not found.
+ *      - do this for subgroups as well.
+ *  - search for tracks in subgroups.
+ *  - place new tracks in subgroups (use '/' or '\' to do this)
+ *  - delete tracks.
+ *  - look into other tracks like signal.
+ *  - move tracks between groups.
+ */
+
 // an animator for the volumetic mesh.
 public class VolumetricAnimator : MonoBehaviour
 {
+    // TODO: setup going into sub groups.
     // an enum for the list of tracks.
     public enum trackType { trackGroup, activation, animation, audio, control, signal, playable, volumetric }
 
@@ -34,8 +46,12 @@ public class VolumetricAnimator : MonoBehaviour
     // the dropdown for the track type.
     public Dropdown trackTypeDropdown;
 
-    // the amount of tracks.
-    public Text trackCountText;
+    [Header("Track Counts")]
+    // the amount of root tracks.
+    public Text rootTrackCountText;
+
+    // the amount of output tracks.
+    public Text outputTrackCountText;
 
     // Start is called before the first frame update
     void Start()
@@ -470,14 +486,38 @@ public class VolumetricAnimator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // updates the text.
-        if (trackCountText != null && director != null)
-        {
-            // the amount of tracks (this is +1 of the amount of output tracks)
-            int clipCount = director.timelineasset.outputTrackCount - 1;
+        // GetRootTracks() gets both group tracks and output tracks
+        //  - group tracks are effectively folders that hold other tracks.
 
-            // updates the text.
-            trackCountText.text = "Track Count: " + clipCount.ToString("000");
+        // GetOutputTracks() only gets output tracks
+        //  - output tracks are tracks that control different animation tracks
+
+        // TrackAsset.GetChildTracks() gets the sub-tracks of a track.
+
+        // the director is set.
+        if(director != null)
+        {
+            // updates the root track text.
+            if (rootTrackCountText != null)
+            {
+                // the amount of root tracks (this is +1 of the amount of root tracks)
+                int clipCount = director.timelineasset.rootTrackCount - 1;
+
+                // updates the text.
+                rootTrackCountText.text = "Root Track Count: " + clipCount.ToString("000");
+            }
+
+            // updates the output track text.
+            if (outputTrackCountText != null)
+            {
+                // the amount of output tracks (this is +1 of the amount of output tracks)
+                int clipCount = director.timelineasset.outputTrackCount - 1;
+
+                // updates the text.
+                outputTrackCountText.text = "Output Track Count: " + clipCount.ToString("000");
+            }
         }
+
+        
     }
 }
