@@ -1,6 +1,12 @@
 /*
  * References:
  *  - https://forum.unity.com/threads/get-all-grouptrack-in-timeline.512140/
+ *  - https://docs.unity3d.com/Packages/com.unity.timeline@1.6/api/UnityEngine.Timeline.TimelineAsset.html
+ *  - https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerator.movenext?view=net-6.0
+ *  - https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable.getenumerator?view=net-6.0
+ *  - https://docs.unity3d.com/2018.2/Documentation/Manual/TimelineOrganizingTrackGroups.html
+ *  - https://stackoverflow.com/questions/1654209/how-to-access-index-in-ienumerable-object-in-c
+ *      - to cycle through an IEnumerable you need a foreach loop.
  */
 
 using System.Collections;
@@ -8,12 +14,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Timeline;
+using UnityEngine.Playables;
 
 // an animator for the volumetic mesh.
 public class VolumetricAnimator : MonoBehaviour
 {
     // an enum for the list of tracks.
-    public enum trackType { activation, animation, audio, control, signal, playable, volumetric }
+    public enum trackType { trackGroup, activation, animation, audio, control, signal, playable, volumetric }
 
     // director for running animations.
     public TimelineDirector director;
@@ -45,6 +52,8 @@ public class VolumetricAnimator : MonoBehaviour
 
     }
 
+    // TIMELINE FUNCTIONS //
+
     // the timeline director should play on awake.
     public bool GetPlayOnAwake()
     {
@@ -75,6 +84,103 @@ public class VolumetricAnimator : MonoBehaviour
         director.StopTimeline();
     }
 
+    // CREATING TRACKS
+
+    // gets a track group based on the provided index.
+    public TrackAsset GetRootTrack(int index)
+    {
+        // gets all the groups and tracks
+        IEnumerable<TrackAsset> rootTracks = director.timelineasset.GetRootTracks();
+
+        // index out of bounds.
+        if (index < 0 || index >= director.timelineasset.rootTrackCount)
+            return null;
+
+        // used to track the index.
+        int i = 0;
+
+        // goes through all values.
+        foreach(TrackAsset track in rootTracks)
+        {
+            // index matches, so grab the value.
+            if (i == index)
+                return track;
+
+            // next index.
+            i++;
+        }
+
+        // not found, so return null.
+        return null;
+    }
+
+    // gets a track by its name.
+    public TrackAsset GetRootTrack(string trackName)
+    {
+        // gets all the groups and tracks
+        IEnumerable<TrackAsset> rootTracks = director.timelineasset.GetRootTracks();
+
+        // goes through all values.
+        foreach (TrackAsset track in rootTracks)
+        {
+            // found root track, so return the track.
+            if (track.name == trackName)
+            {
+                return track;
+            }
+        }
+
+        return null;
+    }
+
+    // checks if a track asset of the provided name exists.
+    public bool ContainsRootTrack(string trackName)
+    {
+        // gets all the groups and tracks
+        IEnumerable<TrackAsset> rootTracks = director.timelineasset.GetRootTracks();
+        
+        // goes through all values.
+        foreach(TrackAsset track in rootTracks)
+        {
+            // found root track, so return true.
+            if(track.name == trackName)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // gets a track group based on the provided name.
+    public GroupTrack GetGroupTrack(string trackName)
+    {
+        // the track to be returned.
+        GroupTrack group = null;
+
+        // gets all the groups and tracks
+        IEnumerable<TrackAsset> rootTracks = director.timelineasset.GetRootTracks();
+        
+        // goes through all roots.
+        foreach(TrackAsset track in rootTracks)
+        {
+            // found group, so return true.
+            if (track.name == trackName)
+            {
+                // if this is of the right type.
+                if (track is GroupTrack)
+                {
+                    group = track as GroupTrack;
+                    break;
+                }
+            }
+        }
+        
+
+        // returns the group.
+        return group;
+    }
+
     // gets the track name from the enum.
     public string TrackTypeNameFromEnum(trackType type)
     {
@@ -84,6 +190,10 @@ public class VolumetricAnimator : MonoBehaviour
         // checks the type.
         switch (type)
         {
+            case trackType.trackGroup:
+                nameStr = "Track Group";
+                break;
+
             case trackType.activation:
                 nameStr = "Activation Track";
                 break;
@@ -136,7 +246,11 @@ public class VolumetricAnimator : MonoBehaviour
         string trackName = "", trackGroupName = "";
 
         // checks what type of track to generate.
-        if(typeStr == "Activation Track")
+        if(typeStr == "Track Group")
+        {
+            typeEnum = trackType.trackGroup;
+        }
+        else if(typeStr == "Activation Track")
         {
             typeEnum = trackType.activation;
         }
@@ -208,8 +322,16 @@ public class VolumetricAnimator : MonoBehaviour
         // checks the type.
         switch(type)
         {
+            case trackType.trackGroup:
+                if (trackName != "") // name provided.
+                    track = director.timelineasset.CreateTrack<GroupTrack>(trackName);
+                else // no name provided.
+                    track = director.timelineasset.CreateTrack<GroupTrack>();
+
+                break;
+
             case trackType.activation:
-                if (name != "") // name provided.
+                if (trackName != "") // name provided.
                     track = director.timelineasset.CreateTrack<ActivationTrack>(trackName);
                 else // no name provided.
                     track = director.timelineasset.CreateTrack<ActivationTrack>();
@@ -217,7 +339,7 @@ public class VolumetricAnimator : MonoBehaviour
                 break;
 
             case trackType.animation:
-                if (name != "") // name provided.
+                if (trackName != "") // name provided.
                     track = director.timelineasset.CreateTrack<AnimationTrack>(trackName);
                 else // no name provided.
                     track = director.timelineasset.CreateTrack<AnimationTrack>();
@@ -225,7 +347,7 @@ public class VolumetricAnimator : MonoBehaviour
                 break;
 
             case trackType.audio:
-                if (name != "") // name provided.
+                if (trackName != "") // name provided.
                     track = director.timelineasset.CreateTrack<AudioTrack>(trackName);
                 else // no name provided.
                     track = director.timelineasset.CreateTrack<AudioTrack>();
@@ -233,7 +355,7 @@ public class VolumetricAnimator : MonoBehaviour
                 break;
 
             case trackType.control:
-                if (name != "") // name provided.
+                if (trackName != "") // name provided.
                     track = director.timelineasset.CreateTrack<ControlTrack>(trackName);
                 else // no name provided.
                     track = director.timelineasset.CreateTrack<ControlTrack>();
@@ -241,7 +363,7 @@ public class VolumetricAnimator : MonoBehaviour
                 break;
 
             case trackType.signal:
-                if (name != "") // name provided.
+                if (trackName != "") // name provided.
                     track = director.timelineasset.CreateTrack<SignalTrack>(trackName);
                 else // no name provided.
                     track = director.timelineasset.CreateTrack<SignalTrack>();
@@ -249,7 +371,7 @@ public class VolumetricAnimator : MonoBehaviour
                 break;
 
             case trackType.playable:
-                if (name != "") // name provided.
+                if (trackName != "") // name provided.
                     track = director.timelineasset.CreateTrack<PlayableTrack>(trackName);
                 else // no name provided.
                     track = director.timelineasset.CreateTrack<PlayableTrack>();
@@ -258,7 +380,7 @@ public class VolumetricAnimator : MonoBehaviour
 
             case trackType.volumetric: // main one
             default:
-                if (name != "") // name provided.
+                if (trackName != "") // name provided.
                     track = director.timelineasset.CreateTrack<VolumetricRenderTrack>(trackName);
                 else // no name provided.
                     track = director.timelineasset.CreateTrack<VolumetricRenderTrack>();
@@ -269,6 +391,21 @@ public class VolumetricAnimator : MonoBehaviour
 
         // creates the default clip for the track.
         track.CreateDefaultClip();
+
+        // there is a group name, so add it to a group.
+        if(groupName != "")
+        {
+            // the group track to be applied.
+            GroupTrack groupTrack = GetGroupTrack(groupName);
+
+            // TODO: have parameter to make a group if it doesn't exist.
+
+            // group track found.
+            if (groupTrack != null)
+                track.SetGroup(groupTrack);
+        }        
+
+        // TODO: adjust this to mention the group if applicable. 
 
         // NOTE: when you add a track, it will not show up until you stop the program and run it again.
         Debug.Log("Added " + TrackTypeNameFromEnum(type) + " named \"" + track.name + "\" to the Timeline Asset and gave it a clip. " +
@@ -281,26 +418,36 @@ public class VolumetricAnimator : MonoBehaviour
     // adds a timeline asset using the input field for the name.
     public void CreateVolumetricRenderTrack()
     {
-        // input field set.
+        // name and group input.
+        string nameInput = "", groupInput = "";
+
+        // name input field set.
         if(nameInputField != null)
         {
-            // creates the track.
-            CreateVolumetricRenderTrack(nameInputField.text);
+            // saves the name
+            nameInput = nameInputField.text;
 
             // clears out the text to show that it went through.
             nameInputField.text = "";
 
         }
-        // input field not set.
-        else
+
+        // group input field set.
+        if (groupInputField != null)
         {
-            // creates the track with no name.
-            CreateVolumetricRenderTrack("");
+            // saves the group name
+            groupInput = groupInputField.text;
+
+            // clears out the text to show that it went through.
+            groupInputField.text = "";
+
         }
+
+        CreateVolumetricRenderTrack(nameInput, groupInput);
     }
 
     // adds a timeline asset.
-    public void CreateVolumetricRenderTrack(string name)
+    public void CreateVolumetricRenderTrack(string name, string group)
     {
         // creates the track.
         VolumetricRenderTrack track;
@@ -317,7 +464,7 @@ public class VolumetricAnimator : MonoBehaviour
         // NOTE: when you add a track, it will not show up until you stop the program and run it again.
         Debug.Log("Added " + track.name + " to the Timeline Asset and gave it a clip. " +
             "Click off the timeline object, and then click back on it to view the new track.");
-    
+
     }
 
     // Update is called once per frame
