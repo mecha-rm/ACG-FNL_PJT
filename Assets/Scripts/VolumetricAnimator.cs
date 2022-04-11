@@ -46,6 +46,19 @@ public class VolumetricAnimator : MonoBehaviour
     // the dropdown for the track type.
     public Dropdown trackTypeDropdown;
 
+    [Header("Track Settings")]
+    // track should be locked on creation.
+    public bool lockTrack;
+
+    // toggle for locking.
+    public Toggle lockToggle;
+
+    // track should be muted on creation.
+    public bool muteTrack;
+
+    // toggle for muting.
+    public Toggle muteToggle;
+
     [Header("Track Counts")]
     // the amount of root tracks.
     public Text rootTrackCountText;
@@ -60,6 +73,15 @@ public class VolumetricAnimator : MonoBehaviour
         // finds the playback controls.
         if (director == null)
             director = GetComponent<TimelineDirector>();
+
+
+        // change the setting on start.
+        if (lockToggle != null)
+            lockToggle.isOn = lockTrack;
+
+        // change the mute toggle on start.
+        if (muteToggle != null)
+            muteToggle.isOn = muteTrack;
 
         // check mTracks or trackObjects to see how many tracks have been made, but are not accessible at compile time.
         // output track count is 1 more than the amount of tracks.
@@ -98,6 +120,68 @@ public class VolumetricAnimator : MonoBehaviour
     public void StopTimeline()
     {
         director.StopTimeline();
+    }
+    
+    // TRACK SETTINGS
+    
+    // Lock
+    // returns lock track value.
+    public bool GetLockTrack()
+    {
+        return lockTrack;
+    }
+
+    // locks the track, and changes the toggle.
+    public void SetLockTrack(bool l)
+    {
+        lockTrack = l;
+
+        if (lockToggle != null)
+            lockToggle.isOn = l;
+    }
+
+    // toggles the lock track value.
+    public void ToggleLockTrack()
+    {
+        SetLockTrack(!lockTrack);
+    }
+
+    // sets the lock track value by the toggle UI object.
+    public void SetLockTrackByToggleUI()
+    {
+        // sets the value.
+        if (lockToggle != null)
+            lockTrack = lockToggle.isOn;
+    }
+
+    // Mute
+    // returns mute track value.
+    public bool GetMuteTrack()
+    {
+        return muteTrack;
+    }
+
+    // mutes the track, and changes the toggle.
+    public void SetMuteTrack(bool m)
+    {
+        muteTrack = m;
+
+        if (muteToggle != null)
+            muteToggle.isOn = m;
+    }
+
+    // toggles the mute track value.
+    public void ToggleMuteTrack()
+    {
+        SetLockTrack(!muteTrack);
+    }
+
+    // sets the mute track value by the toggle UI object.
+    public void SetMuteTrackByToggleUI()
+    {
+        // sets the value.
+        if (muteToggle != null)
+            muteTrack = muteToggle.isOn;
     }
 
     // CREATING TRACKS
@@ -408,17 +492,26 @@ public class VolumetricAnimator : MonoBehaviour
         // creates the default clip for the track.
         track.CreateDefaultClip();
 
+        // lock and mute settings.
+        track.locked = lockTrack;
+        track.muted = muteTrack;
+
         // there is a group name, so add it to a group.
         if(groupName != "")
         {
             // the group track to be applied.
             GroupTrack groupTrack = GetGroupTrack(groupName);
 
-            // TODO: have parameter to make a group if it doesn't exist.
+            // group track does not exist, so make a new group track.
+            if(groupTrack == null)
+                groupTrack = director.timelineasset.CreateTrack<GroupTrack>(groupName);
 
             // group track found.
             if (groupTrack != null)
+            {
+                // set the group of the track.
                 track.SetGroup(groupTrack);
+            }
         }        
 
         // TODO: adjust this to mention the group if applicable. 
