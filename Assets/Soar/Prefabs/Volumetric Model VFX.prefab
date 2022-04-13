@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4459952631692275862}
   - component: {fileID: 7642602422687951836}
   - component: {fileID: 7947532853557375689}
+  - component: {fileID: 112066496947819944}
   - component: {fileID: 123609171678547763}
   m_Layer: 0
   m_Name: Volumetric Model VFX
@@ -104,6 +105,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
+--- !u!114 &112066496947819944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365367085053695662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d986f2d9fc894a5429c7668421c7b941, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &123609171678547763
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -260,6 +273,7 @@ VisualEffect:
       m_Array: []
 --- !u!73398921 &699973305894447642
 VFXRenderer:
+  serializedVersion: 1
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -276,8 +290,6 @@ VFXRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -449,7 +461,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5571570091742879835}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 54a0ce3cebf2442f5b1a6dbf1368e203, type: 3}
   m_Name: 
@@ -466,7 +478,7 @@ MonoBehaviour:
   m_Script: {fileID: -1602337218, guid: b495353b2c0b33844b25ec28bd085a6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: Riley_01637261937_master
+  fileName: test_68583981_master
   autoLoop: 0
   autoPlay: 0
   depthTextureScaleFactor: 0.5
