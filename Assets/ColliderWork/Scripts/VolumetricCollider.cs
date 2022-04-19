@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class VolumetricCollider : MonoBehaviour
 {
-    // Start is called before the first frame update
+   
     public ColliderManager Manager;
-    private Collider my_collider;
+    private Collider my_collider; //The Default Collider
 
     void Start()
     {
@@ -19,7 +19,8 @@ public class VolumetricCollider : MonoBehaviour
     }
 
 
-    //First Entry
+    // Trigger Events..
+    // The name of the collider that fired is passed to the manager
     public void OnCollisionEnter(Collision other)
     {
         Debug.Log("Collider hit");
@@ -37,11 +38,16 @@ public class VolumetricCollider : MonoBehaviour
         Manager.CollisionDetected_CollisionExit(other, this.gameObject.name);
     }
 
+
+
+    //Activates the collider to receive collisions.
     public void Activate()
     {
         my_collider.enabled = true;
     }
 
+
+    //Disables the collider from receiving collisions.
     public void Deactivate()
     {
         my_collider.enabled = false;

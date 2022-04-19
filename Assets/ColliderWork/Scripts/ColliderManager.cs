@@ -5,8 +5,12 @@ using UnityEngine;
 public class ColliderManager : MonoBehaviour
 {
 
+    // This Handles the children of the Manager 
+
     public VolumetricTrigger[] Volumetric_Trigger_List;
     public VolumetricCollider[] Volumetric_Collider_List;
+
+    //These hold the Boolean pair for each collider (if its colliding or not).
 
     public List<Collider_Bool> Trigger_List = new List<Collider_Bool>();
     public List<Collider_Bool> Collider_List = new List<Collider_Bool>();
@@ -16,8 +20,12 @@ public class ColliderManager : MonoBehaviour
 
     private void Start()
     {
+        //Get Children..
+
         Volumetric_Trigger_List = this.GetComponentsInChildren<VolumetricTrigger>();
         Volumetric_Collider_List = this.GetComponentsInChildren<VolumetricCollider>();
+
+        //Add them to their proper lists..
 
         foreach (VolumetricTrigger vt in Volumetric_Trigger_List)
         {
@@ -31,15 +39,15 @@ public class ColliderManager : MonoBehaviour
             Debug.Log("Added Collider Boolean");
         }
 
-        foreach (Collider_Bool cb in Trigger_List)
-        {
-            //print(cb.Name);
-        }
-
-        foreach (Collider_Bool cb in Collider_List)
-        {
-            print(cb.Name);
-        }
+        //foreach (Collider_Bool cb in Trigger_List)
+        //{
+        //    //print(cb.Name);
+        //}
+        //
+        //foreach (Collider_Bool cb in Collider_List)
+        //{
+        //    print(cb.Name);
+        //}
     }
 
     //void Update()
@@ -49,6 +57,8 @@ public class ColliderManager : MonoBehaviour
 
 
     //** TRIGGER EVENTS ** \\
+    
+    //The for each loop finds which trigger or collider was tripped, then sets their boolean pair to true.
 
     public void CollisionDetected_TriggerEnter(Collider other, string col_name)
     {
@@ -172,6 +182,8 @@ public class ColliderManager : MonoBehaviour
     //** COLLISION EVENTS ** \\
 
 
+
+    // Whenever a Volumetric Collider is disabled, it sets the corresponding boolean pair to false.
     public void CleanDeactivate(string col_name)
     {
         foreach (Collider_Bool cb in Trigger_List)
@@ -199,6 +211,7 @@ public class ColliderManager : MonoBehaviour
         }
     }
 
+    //This is a check for a specific collider to see if it has been triggered.
     public bool Check_For_Collision(string col_name)
     {
         foreach (Collider_Bool cb in Trigger_List)
@@ -228,6 +241,8 @@ public class ColliderManager : MonoBehaviour
         return false;
     }
 
+
+    //This checks all colliders and returns true if any of them are tripped.
     public bool Check_For_Collision_Any()
     {
         foreach (Collider_Bool cb in Trigger_List)
