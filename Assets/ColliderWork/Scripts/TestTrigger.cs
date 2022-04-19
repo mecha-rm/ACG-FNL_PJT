@@ -22,6 +22,6 @@ public class TestTrigger : MonoBehaviour
     {
         Debug.Log("Collider hit");
 
-        Manager.CollisionDetected_TriggerEnter(other);
+       // Manager.CollisionDetected_TriggerEnter(other, th);
     }
 }

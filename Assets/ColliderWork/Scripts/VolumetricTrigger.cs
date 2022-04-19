@@ -1,8 +1,8 @@
-using System.Collections;
+    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VolumetricCollider : MonoBehaviour
+public class VolumetricTrigger : MonoBehaviour
 {
     // Start is called before the first frame update
     public ColliderManager Manager;
@@ -20,21 +20,21 @@ public class VolumetricCollider : MonoBehaviour
 
 
     //First Entry
-    public void OnCollisionEnter(Collision other)
+    public void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Collider hit");
+        //Debug.Log("Collider hit");
 
-        Manager.CollisionDetected_CollisionEnter(other, this.gameObject.name);
+        Manager.CollisionDetected_TriggerEnter(other, this.gameObject.name);
     }
 
-    public void OnCollisionStay(Collision other)
+    public void OnTriggerStay(Collider other)
     {
-        Manager.CollisionDetected_CollisionStay(other, this.gameObject.name);
+        Manager.CollisionDetected_TriggerStay(other, this.gameObject.name);
     }
 
-    public void OnCollisionExit(Collision other)
+    public void OnTriggerExit(Collider other)
     {
-        Manager.CollisionDetected_CollisionExit(other, this.gameObject.name);
+        
     }
 
     public void Activate()
@@ -48,5 +48,4 @@ public class VolumetricCollider : MonoBehaviour
 
         Manager.CleanDeactivate(this.gameObject.name);
     }
-
 }
