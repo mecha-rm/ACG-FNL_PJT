@@ -34,7 +34,7 @@ public class VolumetricTrigger : MonoBehaviour
 
     public void OnTriggerExit(Collider other)
     {
-        
+        Manager.CollisionDetected_TriggerExit(other, this.gameObject.name);
     }
 
     public void Activate()
