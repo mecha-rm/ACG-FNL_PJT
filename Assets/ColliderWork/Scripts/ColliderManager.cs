@@ -227,7 +227,36 @@ public class ColliderManager : MonoBehaviour
 
         return false;
     }
-    
+
+    public bool Check_For_Collision_Any()
+    {
+        foreach (Collider_Bool cb in Trigger_List)
+        {
+            if (cb.isColliding)
+            {
+
+                return cb.isColliding;
+
+                //temp = cb;
+
+            }
+        }
+
+        foreach (Collider_Bool cb in Collider_List)
+        {
+            if (cb.isColliding)
+            {
+
+                return cb.isColliding;
+
+                //temp = cb;
+
+            }
+        }
+
+        return false;
+    }
+
 }
 
 
