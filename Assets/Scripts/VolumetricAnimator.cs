@@ -16,21 +16,9 @@ using UnityEngine.UI;
 using UnityEngine.Timeline;
 using UnityEngine.Playables;
 
-/*
- * TODO: next steps for the animator.
- *  - create group if provided group was not found.
- *      - do this for subgroups as well.
- *  - search for tracks in subgroups.
- *  - place new tracks in subgroups (use '/' or '\' to do this)
- *  - delete tracks.
- *  - look into other tracks like signal.
- *  - move tracks between groups.
- */
-
 // an animator for the volumetic mesh.
 public class VolumetricAnimator : MonoBehaviour
 {
-    // TODO: setup going into sub groups.
     // an enum for the list of tracks.
     public enum trackType { trackGroup, activation, animation, audio, control, signal, playable, volumetric }
 
@@ -361,6 +349,12 @@ public class VolumetricAnimator : MonoBehaviour
         return foundTrack;
     }
 
+    // tries to grab a track subgroup.
+    public GroupTrack GetTrackSubgroup(string trackPath)
+    {
+        return GetTrackSubgroup(trackPath, trackPath.Contains("/"));
+    }
+
     // gets a track subgroup
     // forwardSlash: determines if things are seperated by a forwardSlash or backwardSlash.
     public GroupTrack GetTrackSubgroup(string trackPath, bool forwardSlash)
@@ -567,7 +561,6 @@ public class VolumetricAnimator : MonoBehaviour
     }
 
     // creates a track.
-    // TODO: change to returning a bool.
     public void CreateTrack(trackType type, string trackName, string groupName = "")
     {
         // activation, animation, audio, control, signal, playable, volumetric 
@@ -632,7 +625,7 @@ public class VolumetricAnimator : MonoBehaviour
 
                 break;
 
-            case trackType.volumetric: // main one
+            case trackType.volumetric: // main track type.
             default:
                 if (trackName != "") // name provided.
                     track = director.timelineasset.CreateTrack<VolumetricRenderTrack>(trackName);
@@ -642,18 +635,6 @@ public class VolumetricAnimator : MonoBehaviour
                 break;
 
         }
-
-        // creates the default clip for the track.
-        if(createDefaultClip)
-        {
-            // group tracks are abstract, so they have no default clip.
-            if (!(track is GroupTrack))
-                track.CreateDefaultClip();
-        }
-
-        // lock and mute settings.
-        track.locked = lockTrack;
-        track.muted = muteTrack;
 
         // there is a group name, so add it to a group.
         if (groupName != "")
@@ -679,23 +660,29 @@ public class VolumetricAnimator : MonoBehaviour
             if (groupTrack != null)
             {
                 // set the group of the track.
-                // NOTE: this does not work when trying to make a subgroup.
-                // if you try that it will just make the groups be outside of each other.
                 track.SetGroup(groupTrack);
             }
         }
 
-        // TODO: adjust this to mention the group if applicable. 
+        // creates the default clip for the track.
+        if (createDefaultClip)
+        {
+            // group tracks are abstract, so they have no default clip.
+            if (!(track is GroupTrack))
+                track.CreateDefaultClip();
+        }
+
+        // lock and mute settings.
+        track.locked = lockTrack;
+        track.muted = muteTrack;
 
         // NOTE: when you add a track, it will not show up until you stop the program and run it again.
         Debug.Log("Added " + TrackTypeNameFromEnum(type) + " named \"" + track.name + "\" to the Timeline Asset and gave it a clip. " +
             "Click off the timeline object, and then click back on it to view the new track.");
     }
 
-    // originally called by the button.
     // VOLUMETRIC RENDER TRACK
-    // TODO: no longer used, so remove this.
-    // adds a timeline asset using the input field for the name.
+    // adds a volumetric track using the input fields for the name and group.
     public void CreateVolumetricRenderTrack()
     {
         // name and group input.
@@ -723,44 +710,48 @@ public class VolumetricAnimator : MonoBehaviour
 
         }
 
+        // calls related function.
         CreateVolumetricRenderTrack(nameInput, groupInput);
     }
 
-    // adds a timeline asset.
-    // TODO: no longer used, so remove this.
+    // adds a volumetric timeline asset.
     public void CreateVolumetricRenderTrack(string trackName, string groupName)
     {
-        // creates the track.
-        VolumetricRenderTrack track = null;
-        GroupTrack group = null;
-        
-        if(trackName != "") // name provided.
-            track = director.timelineasset.CreateTrack<VolumetricRenderTrack>(trackName);
-        else // no name provided.
-            track = director.timelineasset.CreateTrack<VolumetricRenderTrack>();
+        // calls the main create track function.
+        CreateTrack(trackType.volumetric, trackName, groupName);
 
-        // tries to find a subgroup.
-        if (groupName.Contains("/") || groupName.Contains("\\"))
-        {
-            group = GetTrackSubgroup(groupName, groupName.Contains("/"));
-        }
-        else
-        {
-            group = GetGroupTrack(groupName);
-        }
-
-        // group track not found, so find it.
-        if(group == null)
-            group = director.timelineasset.CreateTrack<GroupTrack>();
-
-
-        // adds a clip
-        // the clip cannot be grabbed for some reason.
-        track.CreateDefaultClip();
-
-        // NOTE: when you add a track, it will not show up until you stop the program and run it again.
-        Debug.Log("Added " + track.name + " to the Timeline Asset and gave it a clip. " +
-            "Click off the timeline object, and then click back on it to view the new track.");
+        // No Longer Needed.
+        // // creates the track.
+        // VolumetricRenderTrack track = null;
+        // GroupTrack group = null;
+        // 
+        // if(trackName != "") // name provided.
+        //     track = director.timelineasset.CreateTrack<VolumetricRenderTrack>(trackName);
+        // else // no name provided.
+        //     track = director.timelineasset.CreateTrack<VolumetricRenderTrack>();
+        // 
+        // // tries to find a subgroup.
+        // if (groupName.Contains("/") || groupName.Contains("\\"))
+        // {
+        //     group = GetTrackSubgroup(groupName, groupName.Contains("/"));
+        // }
+        // else
+        // {
+        //     group = GetGroupTrack(groupName);
+        // }
+        // 
+        // // group track not found, so find it.
+        // if(group == null)
+        //     group = director.timelineasset.CreateTrack<GroupTrack>();
+        // 
+        // 
+        // // adds a clip
+        // // the clip cannot be grabbed for some reason.
+        // track.CreateDefaultClip();
+        // 
+        // // NOTE: when you add a track, it will not show up until you stop the program and run it again.
+        // Debug.Log("Added " + track.name + " to the Timeline Asset and gave it a clip. " +
+        //     "Click off the timeline object, and then click back on it to view the new track.");
 
     }
 
@@ -799,22 +790,27 @@ public class VolumetricAnimator : MonoBehaviour
     // deletes a track.
     public bool DeleteTrack(string trackName, string groupName = "")
     {
-        // track does not exist.
-        if (!ContainsRootTrack(trackName))
-            return false;
+        // taken out since it interferes with subgroup searches.
+        // if (!ContainsRootTrack(trackName))
+        //     return false;
 
-        // TODO: account for sub groups.
+        // the parent track of the track to be deleted.
         TrackAsset parentTrack = null;
+
+        // the track to be deleted.
         TrackAsset track = null;
 
         // group name has been provided.
         if (groupName != "")
         {
             // grabs the parent track.
-            parentTrack = GetRootTrack(groupName);
+            // parentTrack = GetRootTrack(groupName);
+
+            // looks through subgroups for parent track.
+            parentTrack = GetTrackSubgroup(groupName);
         }
 
-        // grabs the track from the parent if one exists. Else just look for root tracks.
+        // grabs the track from the parent if one exists. Else it just look for root tracks.
         if(parentTrack != null)
             track = GetChildTrack(parentTrack, trackName);
         else
@@ -824,6 +820,7 @@ public class VolumetricAnimator : MonoBehaviour
         // tries to delete the track.
         bool result = director.timelineasset.DeleteTrack(track);
 
+        // message for deleting the track.
         if (result)
             Debug.Log("Track successfully deleted.");
         else
@@ -841,7 +838,7 @@ public class VolumetricAnimator : MonoBehaviour
         // GetOutputTracks() only gets output tracks
         //  - output tracks are tracks that control different animation tracks
 
-        // TrackAsset.GetChildTracks() gets the sub-tracks of a track.
+        // TrackAsset.GetChildTracks() gets the subtracks of a track.
 
         // the director is set.
         if(director != null)
@@ -849,7 +846,8 @@ public class VolumetricAnimator : MonoBehaviour
             // updates the root track text.
             if (rootTrackCountText != null)
             {
-                // the amount of root tracks (this is +1 of the amount of root tracks)
+                // the amount of root tracks.
+                // this is +1 of the amount of added root tracks, hence why it does a -1 operation.
                 int clipCount = director.timelineasset.rootTrackCount - 1;
 
                 // updates the text.
@@ -859,7 +857,8 @@ public class VolumetricAnimator : MonoBehaviour
             // updates the output track text.
             if (outputTrackCountText != null)
             {
-                // the amount of output tracks (this is +1 of the amount of output tracks)
+                // the amount of output tracks.
+                // this is +1 of the amount of added output tracks, hence why it does a -1 operation.
                 int clipCount = director.timelineasset.outputTrackCount - 1;
 
                 // updates the text.
@@ -873,8 +872,6 @@ public class VolumetricAnimator : MonoBehaviour
             // toggles the menu UI.
             if (animMenuUI != null)
                 animMenuUI.SetActive(!animMenuUI.activeSelf);
-
-
         }
         
     }

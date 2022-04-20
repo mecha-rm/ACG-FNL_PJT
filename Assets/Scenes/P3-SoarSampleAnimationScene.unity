@@ -2026,12 +2026,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Click off the timeline object and click on it again to view the newly
-    added clips.
+  m_Text: 'Click off the timeline object and click on it again to view the changes.
 
 
-    Press the hide key ("H" by default) to hide the Animaton Track
-    Generator.'
+    Press
+    the hide key ("H" by default) to hide the Animaton Track Generator.'
 --- !u!222 &1068806453
 CanvasRenderer:
   m_ObjectHideFlags: 0
